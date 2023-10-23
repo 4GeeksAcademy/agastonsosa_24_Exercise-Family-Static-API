@@ -39,8 +39,8 @@ def add_member():
     if 'lucky_numbers' not in body:
         return jsonify({'msg':'lucky_numbers field in body required'}), 400
     id_member = jackson_family._generateId()
-    if 'id_member' in body:
-        id_member = body['id_member']
+    if 'id' in body:
+        id_member = body['id']
     new_member = {
         'id': id_member,
         'first_name': body['first_name'],
@@ -49,13 +49,13 @@ def add_member():
         'lucky_numbers': body['lucky_numbers']
     }
     jackson_family.add_member(new_member)
-    return jsonify(new_member), 201
+    return jsonify(new_member), 200
 
 @app.route('/member/<int:id>', methods=['DELETE'])
 def delete_member(id):
     member = jackson_family.delete_member(id)
     if member:
-        return jsonify(member), 200
+        return jsonify({'done': True}), 200
     else:
         return jsonify({'error': 'Member not found'}), 404
 
@@ -73,10 +73,10 @@ def update_member(id):
 @app.route('/member/<int:id>', methods=['GET'])
 def get_member(id):
     member = jackson_family.get_member(id)
-    if member:
-        return jsonify(member), 200
-    else:
+    if not member:
         return jsonify({'error': 'Member not found'}), 404
+    else:
+        return jsonify(member), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
